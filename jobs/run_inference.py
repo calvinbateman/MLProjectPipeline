@@ -144,8 +144,8 @@ df = (
 order_ids = df["order_id"].copy()
 
 # ── Feature engineering (IDENTICAL to training — Ch. 17 principle) ───────────
-df["order_datetime"] = pd.to_datetime(df["order_datetime"])
-df["birthdate"]      = pd.to_datetime(df["birthdate"], errors="coerce")
+df["order_datetime"] = pd.to_datetime(df["order_datetime"], format="mixed", utc=True)
+df["birthdate"]      = pd.to_datetime(df["birthdate"], format="mixed", errors="coerce")
 
 df["order_dow"]   = df["order_datetime"].dt.dayofweek
 df["order_month"] = df["order_datetime"].dt.month
