@@ -188,6 +188,21 @@ for col in df.select_dtypes(include=["object"]).columns:
 
 print(f"✓ Feature engineering complete — X shape: {df.shape}")
 
+# ── Diagnostics: check feature distributions before prediction ───────────────
+print("\n=== FEATURE DIAGNOSTICS ===")
+print(f"Columns ({len(df.columns)}): {df.columns.tolist()}")
+print(f"\nDtypes:\n{df.dtypes.to_string()}")
+print(f"\nNaN count per column:\n{df.isna().sum()[df.isna().sum() > 0].to_string() or 'None'}")
+print(f"\nKey fraud signals:")
+print(f"  same_zip    : {df['same_zip'].value_counts().to_dict()}")
+print(f"  foreign_ip  : {df['foreign_ip'].value_counts().to_dict()}")
+print(f"  payment_method: {df['payment_method'].value_counts().to_dict()}")
+print(f"  ip_country  : {df['ip_country'].value_counts().to_dict()}")
+print(f"  customer_age: min={df['customer_age'].min():.1f}, max={df['customer_age'].max():.1f}, mean={df['customer_age'].mean():.1f}")
+print(f"  order_hour  : {sorted(df['order_hour'].unique().tolist())}")
+print(f"  promo_used  : {df['promo_used'].value_counts().to_dict()}")
+print("=== END DIAGNOSTICS ===\n")
+
 # ── Generate predictions ─────────────────────────────────────────────────────
 fraud_proba = model.predict_proba(df)[:, 1]
 fraud_pred  = model.predict(df)
