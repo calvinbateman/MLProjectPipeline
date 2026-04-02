@@ -179,6 +179,13 @@ DROP_COLS = [
 ]
 df.drop(columns=[c for c in DROP_COLS if c in df.columns], inplace=True)
 
+# ── Convert str dtype → object for sklearn compatibility ─────────────────────
+# Newer pandas uses StringDtype ("str") instead of object for text columns.
+# sklearn's OneHotEncoder expects object dtype — convert explicitly.
+for col in df.columns:
+    if hasattr(df[col], 'dtype') and df[col].dtype.name in ['str', 'string']:
+        df[col] = df[col].astype(object)
+
 # ── Rare category binning (5% rule — same threshold as training) ─────────────
 for col in df.select_dtypes(include=["object"]).columns:
     freq = df[col].value_counts(normalize=True)
