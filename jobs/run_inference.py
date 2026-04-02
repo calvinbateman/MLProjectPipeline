@@ -211,8 +211,12 @@ print(f"  promo_used  : {df['promo_used'].value_counts().to_dict()}")
 print("=== END DIAGNOSTICS ===\n")
 
 # ── Generate predictions ─────────────────────────────────────────────────────
+# Threshold tuned for imbalanced fraud data (6.4% base rate).
+# Default 0.5 threshold is too conservative — no orders would be flagged.
+# 0.15 captures orders with meaningfully elevated risk for human review.
+FRAUD_THRESHOLD = 0.15
 fraud_proba = model.predict_proba(df)[:, 1]
-fraud_pred  = model.predict(df)
+fraud_pred  = (fraud_proba >= FRAUD_THRESHOLD).astype(int)
 
 print(f"✓ Predictions generated")
 print(f"  Fraud rate (predicted): {fraud_pred.mean():.3%}")
